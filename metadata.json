@@ -1,0 +1,8 @@
+{
+  "name": "Remix PredictX – AI Predictive Maintenance",
+  "description": "Intelligent industrial predictive maintenance platform monitoring machinery with IoT sensor telemetry and machine learning to predict failures.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
