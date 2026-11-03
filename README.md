@@ -1,166 +1,214 @@
 # PredictX: AI-Powered Predictive Maintenance for Industry 4.0
 
-> **Hackathon Submission:** Industrial IoT Telemetry, Anomaly Detection & Remaining Useful Life (RUL) Prediction Platform adhering to the ISO 10816-3 Mechanical Vibration Standards.
+**Hackathon Submission:** An AI-powered predictive maintenance platform for industrial machinery, featuring IoT telemetry simulation, anomaly detection, machine health monitoring, and Remaining Useful Life (RUL) prediction.
 
-[![React](https://img.shields.io/badge/React-19.0-61dafb?logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4.0-38bdf8?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite-8.0-646cff?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Standard](https://img.shields.io/badge/ISO-10816--3_Compliant-emerald)](https://www.iso.org/)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178c6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
+![Python](https://img.shields.io/badge/Python-Backend-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 
 ---
 
 ## 📌 Problem Statement
 
-Unplanned industrial downtime costs manufacturing enterprises over **$50 billion annually**. Conventional industrial maintenance relies on:
-1. **Reactive Maintenance (Run-to-Failure):** Catastrophic damages, severe safety hazards, and multi-day assembly line halts.
-2. **Preventative Maintenance (Calendar-Based):** Replacing expensive bearings and components before their actual wear limits, wasting up to **40% of useful equipment life**.
+Unplanned industrial equipment failures can cause significant financial losses, production delays, and safety risks.
 
-**PredictX** solves this by providing real-time IoT sensor telemetry ingestion, ISO 10816-3 vibration spectrum analysis, and Machine Learning predictive diagnostics to detect mechanical anomalies **days or weeks before catastrophic failure occurs**.
+Traditional maintenance approaches have limitations:
+
+1. **Reactive Maintenance:** Equipment is repaired only after failure, potentially causing expensive downtime.
+2. **Preventive Maintenance:** Equipment is serviced according to fixed schedules, sometimes replacing components before they actually need maintenance.
+
+**PredictX** aims to address these challenges through machine health monitoring, sensor telemetry analysis, anomaly detection, and predictive maintenance insights.
+
+The platform helps identify potential equipment problems earlier so maintenance teams can make informed decisions and reduce unexpected downtime.
 
 ---
 
 ## 🚀 Key Features
 
-- **📡 Live IoT Telemetry Simulator:** Ingests and renders high-frequency sensor streams (vibration velocity in mm/s, temperature in °C, motor current in Amps, RPM, and acoustic dB) with adjustable sampling rates and live pause/resume toggles.
-- **📈 ISO 10816-3 Vibration Severity Gauge:** Classifies rotating machine health into standardized zones:
-  - **Zone A (Good):** Newly commissioned machinery ($< 1.8\text{ mm/s}$)
-  - **Zone B (Satisfactory):** Long-term operational ($1.8 - 4.5\text{ mm/s}$)
-  - **Zone C (Unsatisfactory / Warning):** Restricted continuous operation ($4.5 - 7.1\text{ mm/s}$)
-  - **Zone D (Critical / Danger):** Immediate damage risk ($> 7.1\text{ mm/s}$)
-- **🧠 Machine Learning Failure Diagnostics:**
-  - Remaining Useful Life (**RUL**) forecasting using degradation curvature modeling.
-  - Anomaly classification: *Bearing Outer-Race Spalling*, *Stator Thermal Runaway*, *Rotor Imbalance*, *Mechanical Jamming*.
-  - Anomaly scoring and real-time confidence metrics.
-- **🧪 Interactive Anomaly Injection Sandbox:** Allows evaluators and faculty to inject realistic failure modes into any machine on the fly and watch the ML engine detect, classify, and trigger maintenance alerts immediately.
-- **🚨 Automated Alert & Work Order Queue:** Dynamic dispatching with triage levels (Nominal, Warning, Critical), ISO escalation, technician assignment, and resolution workflows.
-- **🏭 Asset Management Fleet:** Comprehensive machine profiles with spec sheets, operating hours, baseline thresholds, maintenance histories, and health cards.
-- **📊 Print-Ready Industrial Audit Reports:** Generates professional PDF-ready inspection certificates formatted with ISO 10816-3 test data, engineer sign-offs, and risk matrices.
-- **🗺️ Interactive Solution Pipeline:** Architectural blueprint diagramming the full end-to-end edge-to-cloud data flow from edge sensors to AI models and ERP integrations.
+- **📡 IoT Sensor Monitoring:** Displays machine telemetry, including vibration, temperature, motor current, RPM, and acoustic readings using simulated sensor data.
+- **📈 Vibration Severity Monitoring:** Uses vibration thresholds inspired by ISO 10816-3 guidelines to indicate different machine health conditions.
+  - **Zone A – Good:** Normal vibration condition.
+  - **Zone B – Satisfactory:** Acceptable for continued operation.
+  - **Zone C – Warning:** Unsatisfactory condition requiring attention.
+  - **Zone D – Critical:** Dangerous condition requiring immediate inspection.
+- **🧠 Machine Learning Predictions:** Provides predictive maintenance insights and machine failure diagnostics.
+- **🧪 Anomaly Injection:** Allows users to simulate machine failure conditions and observe changes in machine health indicators.
+- **🚨 Maintenance Alerts:** Displays alerts and maintenance work orders with different priority levels.
+- **🏭 Machine Fleet Management:** Provides machine profiles, operating information, health indicators, and maintenance details.
+- **📊 Analytics Dashboard:** Displays machine health information, telemetry trends, and analytical visualizations.
+- **📄 Inspection Reports:** Provides report-generation and printing functionality.
+- **🗺️ Solution Pipeline:** Presents the proposed workflow connecting machine sensors, data processing, predictive analytics, and maintenance actions.
 
 ---
 
 ## 🏗️ System Architecture
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                    EDGE LAYER (SHOP FLOOR)                   │
-│  [ Accelerometers ]    [ Thermocouples ]    [ Current CTs ]  │
-│  (ISO 10816-3 Vib)     (Bearing Temp)       (Motor Amps)     │
-└──────────────────────────────┬───────────────────────────────┘
-                               │ MQTT / Modbus TCP (48 pkts/s)
-                               ▼
-┌──────────────────────────────────────────────────────────────┐
-│                  INGESTION & STREAM GATEWAY                  │
-│  • Edge Gateway Pre-processing (Anti-aliasing & RMS filter)  │
-│  • Rolling Window Buffer (200 sample memory)                 │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-                               ▼
-┌──────────────────────────────────────────────────────────────┐
-│                   PREDICTX ANALYTICS ENGINE                  │
-│  • ISO 10816-3 Classifier (Zone A / B / C / D)               │
-│  • Spectral Peak & FFT Frequency Deconvolution               │
-│  • Weibull Hazard Rate & Degradation Curve Estimator         │
-│  • Remaining Useful Life (RUL in hours) Calculation          │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-                               ▼
-┌──────────────────────────────────────────────────────────────┐
-│                   PRESENTATION & AUTOMATION                  │
-│  • Real-time Fleet Health Dashboard                          │
-│  • Incident Dispatch & Work Orders                           │
-│  • PDF Inspection Report Generator                           │
-└──────────────────────────────────────────────────────────────┘
+```text
+┌──────────────────────────────────────────────┐
+│             INDUSTRIAL MACHINES              │
+│                                              │
+│  Vibration | Temperature | Current | RPM     │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│             DATA COLLECTION                  │
+│                                              │
+│       Sensor Telemetry / Simulated Data      │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│             DATA PROCESSING                  │
+│                                              │
+│       Data Preparation and Analysis          │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│           PREDICTIVE ANALYTICS               │
+│                                              │
+│       Machine Learning and Anomaly Detection │
+│       Machine Health and Failure Prediction  │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│             USER DASHBOARD                   │
+│                                              │
+│       Machine Monitoring and Alerts          │
+│       Analytics and Maintenance Insights     │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Component | Technology | Rationale |
-|---|---|---|
-| **Frontend Core** | React 19 + TypeScript | High-performance state handling and type safety |
-| **Build Tool** | Vite 8 | Near-instant HMR and production bundle optimization |
-| **Styling** | Tailwind CSS v4 | High-density industrial dark/light UI design system |
-| **Visualizations** | Custom SVG Canvas & Gauges | Low-latency 60 FPS rendering without heavy charting dependencies |
-| **Icons** | Lucide React | Standardized industrial UI iconography |
-| **Animations** | Motion | Smooth state transitions and anomaly alerts |
-| **Backend Integration** | Express + Node.js (Fullstack Ready) | REST API endpoints for telemetry persistence and reports |
+| Component | Technology |
+|---|---|
+| Frontend | React 19 |
+| Programming Language | TypeScript |
+| Build Tool | Vite |
+| Styling | Tailwind CSS v4 |
+| Backend | Python |
+| Backend Framework | FastAPI |
+| Machine Learning | Python ML libraries |
+| Database | SQLite / database integration |
+| Version Control | Git and GitHub |
 
 ---
 
-## 💻 Quick Start / Local Installation
+## 💻 Installation and Setup
 
 ### Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **npm** or **bun** or **yarn**
 
-### Installation Steps
+Install the following software before running the project:
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/<YOUR-USERNAME>/<YOUR-REPO-NAME>.git
-   cd <YOUR-REPO-NAME>
-   ```
+- Node.js
+- npm
+- Python 3
+- Git
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### 1. Clone the Repository
 
-3. **Configure Environment (Optional):**
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+git clone https://github.com/hasini-247/AI-Predictive-Maintenance.git
+cd AI-Predictive-Maintenance
+```
 
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+### 2. Install Frontend Dependencies
 
-5. **Open in your browser:**
-   ```
-   http://localhost:3000
-   ```
+```bash
+npm install
+```
 
----
+### 3. Start the Frontend
 
-## 🎓 Faculty Evaluation & Demo Walkthrough (3-Minute Tour)
+```bash
+npm run dev
+```
 
-For hackathon judges and academic evaluators, follow this recommended walkthrough sequence:
+### 4. Open the Application
 
-1. **Fleet Health Overview (`Fleet Dashboard`):**
-   - Review overall factory health score (92%), active machines, and real-time MTBF.
-   - Inspect the ISO 10816-3 radial health gauge and telemetry trend graphs.
-2. **Real-Time Sensor Feed (`IoT Sensor Live`):**
-   - Observe live vibration, temperature, current, and acoustic telemetry streaming in real time.
-   - Toggle stream speed from **1x** to **5x** or hit **Pause** in the top header.
-3. **Trigger Anomaly Sandbox (Top Header -> `Inject Anomaly`):**
-   - Click **"Inject Anomaly"** in the top navigation bar.
-   - Select **"CNC Milling Machine (CNC-01)"** and choose **"Bearing Outer-Race Fatigue"**.
-   - Watch the ISO Zone jump into **Zone D (Critical)** and vibration spike over **8.5 mm/s**.
-4. **Inspect ML Diagnostics (`ML Failure Prediction`):**
-   - View the updated Remaining Useful Life (**RUL**) dropping rapidly.
-   - Examine the root cause analysis, confidence interval (96.4%), and recommended maintenance steps.
-5. **Review Alert Queue (`Maintenance Alerts`):**
-   - Verify the auto-generated Critical Work Order.
-   - Update its status from **"Active"** to **"In Progress"** or **"Resolved"**.
-6. **Generate Inspection Certificate:**
-   - In Machine Fleet or Dashboard, click **"Export Report"** to view and print the ISO audit certificate.
+Open your browser and visit:
 
----
+```text
+http://localhost:3000
+```
 
-## 📊 Industrial Impact & ROI
+### Backend Setup
 
-- **Downtime Prevention:** Reduces unplanned downtime by up to **72%**.
-- **Maintenance Cost Savings:** Saves **30-40%** by replacing calendar-based maintenance with actual condition-based servicing.
-- **Safety Compliance:** Eliminates catastrophic mechanical blowouts and bearing fires via ISO threshold monitoring.
+The Python backend is located in the nested project directory:
+
+```text
+predictx-ai-predictive-maintenance/backend/
+```
+
+Install the backend dependencies:
+
+```bash
+cd predictx-ai-predictive-maintenance/backend
+pip install -r requirements.txt
+```
+
+Start the FastAPI application:
+
+```bash
+uvicorn api:app --reload
+```
+
+The backend API documentation can be accessed at:
+
+```text
+http://127.0.0.1:8000/docs
+```
 
 ---
 
-## 👥 Hackathon Team & Credits
+## 🎓 Hackathon Demo Walkthrough
 
-- **Project:** PredictX – AI Predictive Maintenance Platform
-- **Standard:** Built in accordance with ISO 10816-3 Vibration Severity Guidelines.
-- **License:** MIT License. Free for academic and hackathon evaluation.
+Judges and evaluators can explore the following features:
+
+1. **Fleet Dashboard:** View machine health indicators and overall fleet information.
+2. **IoT Sensor Live:** Explore machine telemetry and sensor readings.
+3. **Inject Anomaly:** Simulate a machine anomaly and observe changes in its condition.
+4. **ML Failure Prediction:** Explore predictive maintenance insights.
+5. **Maintenance Alerts:** Review machine alerts and work orders.
+6. **Machine Fleet:** Explore machine profiles and health information.
+7. **Analytics:** Review machine performance and telemetry trends.
+8. **Export Report:** Explore the report-generation functionality.
+
+**Note:** The current dashboard includes simulated telemetry. Actual industrial sensor integration requires connecting compatible hardware and data communication services.
+
+---
+
+## 📊 Expected Industrial Benefits
+
+Predictive maintenance solutions can help industries:
+
+- Reduce unexpected equipment downtime.
+- Identify potential machine failures earlier.
+- Improve maintenance planning.
+- Reduce unnecessary component replacement.
+- Improve equipment reliability.
+- Support safer industrial operations.
+
+The actual benefits depend on implementation, equipment conditions, and the accuracy of the predictive models.
+
+---
+
+## 👥 Hackathon Team and Credits
+
+**Project Name:** PredictX – AI-Powered Predictive Maintenance for Industry 4.0
+
+**Project Domain:** Artificial Intelligence, Machine Learning, Industrial IoT
+
+**Purpose:** To develop an intelligent platform that helps monitor industrial machinery and support predictive maintenance decisions.
+
+**Repository:** [AI-Predictive-Maintenance](https://github.com/hasini-247/AI-Predictive-Maintenance)
+
+**License:** MIT
